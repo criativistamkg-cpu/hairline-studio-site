@@ -1,0 +1,50 @@
+{
+    "entities": {
+        "Appointment": {
+            "title": "Appointment",
+            "description": "Represents a single booking made by a client.",
+            "type": "object",
+            "properties": {
+                "clientName": {
+                    "type": "string",
+                    "description": "The full name of the client."
+                },
+                "clientEmail": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "The email address of the client."
+                },
+                "date": {
+                    "type": "string",
+                    "format": "date",
+                    "description": "The date of the appointment in YYYY-MM-DD format."
+                },
+                "time": {
+                    "type": "string",
+                    "description": "The time of the appointment in HH:mm format."
+                },
+                "service": {
+                    "type": "string",
+                    "description": "The name of the service booked."
+                },
+                "createdAt": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "The timestamp when the appointment was created."
+                }
+            },
+            "required": ["clientName", "clientEmail", "date", "time", "service"]
+        }
+    },
+    "auth": {
+        "providers": ["email_password"]
+    },
+    "firestore": {
+        "/appointments/{appointmentId}": {
+            "schema": {
+                "$ref": "#/entities/Appointment"
+            },
+            "description": "Stores all appointment documents."
+        }
+    }
+}
