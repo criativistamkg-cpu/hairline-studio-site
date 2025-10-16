@@ -1,0 +1,10 @@
+{
+  "placeholderImages": [
+    {
+      "id": "hero-salon",
+      "description": "Interior do salão de cabeleireiro.",
+      "imageUrl": "http://i.ibb.co/84PYj5pv/pin-shop.png",
+      "imageHint": "barber shop"
+    }
+  ]
+}
