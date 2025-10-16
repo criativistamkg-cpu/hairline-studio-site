@@ -1,11 +1,11 @@
 "use client";
 
-import { useFormState, useFormStatus } from "react-dom";
+import { useActionState, useEffect } from "react";
+import { useFormStatus } from "react-dom";
 import { login } from "@/lib/actions";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Alert, AlertDescription } from "../ui/alert";
 
@@ -18,8 +18,8 @@ function SubmitButton() {
   );
 }
 
-export function LoginForm() {
-  const [state, dispatch] = useFormState(login, undefined);
+export function AdminLoginForm() {
+  const [state, dispatch] = useActionState(login, undefined);
   const { toast } = useToast();
 
   useEffect(() => {

@@ -6,7 +6,7 @@ import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import type { Appointment } from './types';
 import { getFirestore, collection, getDocs, addDoc, getDoc, doc, updateDoc, deleteDoc, query, where, Timestamp } from 'firebase/firestore';
-import { initializeFirebase } from '@/firebase/server';
+import { initializeFirebase as initializeAdmin } from '@/firebase/server';
 
 const appointmentSchema = z.object({
   clientName: z.string().min(2, { message: 'O nome deve ter pelo menos 2 caracteres.' }),
@@ -19,7 +19,7 @@ const appointmentSchema = z.object({
 const MAX_APPOINTMENTS_PER_DAY = 5;
 
 // --- FIRESTORE SETUP ---
-const { firestore } = initializeFirebase();
+const { firestore } = initializeAdmin();
 const appointmentsCollection = collection(firestore, 'appointments');
 
 
@@ -172,13 +172,13 @@ export async function exportAppointments() {
 
 // --- AUTH ACTIONS ---
 
-const loginSchema = z.object({
+const adminLoginSchema = z.object({
   username: z.string(),
   password: z.string(),
 });
 
 export async function login(prevState: any, formData: FormData) {
-  const validatedFields = loginSchema.safeParse(Object.fromEntries(formData.entries()));
+  const validatedFields = adminLoginSchema.safeParse(Object.fromEntries(formData.entries()));
 
   if (!validatedFields.success) {
     return { message: 'Dados inválidos.' };
@@ -187,7 +187,6 @@ export async function login(prevState: any, formData: FormData) {
   const { username, password } = validatedFields.data;
   
   // IMPORTANT: This is NOT secure and for demonstration purposes only.
-  // Use a proper auth library like NextAuth.js or Lucia in production.
   if (username === 'hairline' && password === 'HairLineStudio01') {
     cookies().set('is_admin', 'true', { httpOnly: true, path: '/' });
     redirect('/admin/dashboard');
