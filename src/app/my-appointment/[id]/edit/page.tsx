@@ -19,8 +19,8 @@ export default async function EditAppointmentPage({ params }: { params: { id: st
       <main className="flex-grow container py-12 md:py-20">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-10">
-            <h1 className="text-3xl md:text-4xl font-headline text-primary">Modify Your Appointment</h1>
-            <p className="mt-2 text-lg text-muted-foreground">Adjust your booking details below.</p>
+            <h1 className="text-3xl md:text-4xl font-headline text-primary">Modifique a Sua Marcação</h1>
+            <p className="mt-2 text-lg text-muted-foreground">Ajuste os detalhes da sua reserva abaixo.</p>
           </div>
           <EditBookingForm appointment={appointment} dailyBookings={dailyBookings} />
         </div>

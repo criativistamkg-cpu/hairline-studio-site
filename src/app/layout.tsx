@@ -6,7 +6,7 @@ import { CustomCursor } from '@/components/CustomCursor';
 
 export const metadata: Metadata = {
   title: 'Hairline Studio Online',
-  description: 'Rustic Charm, Modern Style. Book your appointment online.',
+  description: 'Charme rústico, estilo moderno. Faça a sua marcação online.',
 };
 
 export default function RootLayout({
@@ -15,7 +15,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="pt" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />

@@ -18,6 +18,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { format } from "date-fns";
+import { pt } from 'date-fns/locale';
 import { Badge } from "../ui/badge";
 import Link from "next/link";
 
@@ -28,8 +29,8 @@ export function AppointmentsTable({ appointments }: { appointments: Appointment[
     startTransition(async () => {
       await deleteAppointment(id);
       toast({
-        title: "Success",
-        description: "Appointment has been deleted.",
+        title: "Sucesso",
+        description: "A marcação foi eliminada.",
       });
     });
   };
@@ -38,10 +39,10 @@ export function AppointmentsTable({ appointments }: { appointments: Appointment[
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>Client</TableHead>
-          <TableHead>Date & Time</TableHead>
-          <TableHead>Service</TableHead>
-          <TableHead className="text-right">Actions</TableHead>
+          <TableHead>Cliente</TableHead>
+          <TableHead>Data e Hora</TableHead>
+          <TableHead>Serviço</TableHead>
+          <TableHead className="text-right">Ações</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -52,31 +53,31 @@ export function AppointmentsTable({ appointments }: { appointments: Appointment[
               <div className="text-sm text-muted-foreground">{appt.clientEmail}</div>
             </TableCell>
             <TableCell>
-              <div>{format(new Date(appt.date), "PPP")}</div>
+              <div>{format(new Date(appt.date), "PPP", { locale: pt })}</div>
               <Badge variant="outline">{appt.time}</Badge>
             </TableCell>
             <TableCell>{appt.service}</TableCell>
             <TableCell className="text-right space-x-2">
               <Button variant="outline" size="sm" asChild>
-                <Link href={`/my-appointment/${appt.id}/edit`}>Edit</Link>
+                <Link href={`/my-appointment/${appt.id}/edit`}>Editar</Link>
               </Button>
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button variant="destructive" size="sm" disabled={isPending}>
-                    Delete
+                    Eliminar
                   </Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                    <AlertDialogTitle>Tem a certeza?</AlertDialogTitle>
                     <AlertDialogDescription>
-                      This action cannot be undone. This will permanently delete the appointment.
+                      Esta ação não pode ser desfeita. Isto irá eliminar permanentemente a marcação.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
                     <AlertDialogAction onClick={() => handleDelete(appt.id)}>
-                      Continue
+                      Continuar
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>

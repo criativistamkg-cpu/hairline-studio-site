@@ -10,12 +10,12 @@ export function Header() {
           <HairlinesLogo className="h-10 w-auto text-primary" />
         </Link>
         <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
-          <Link href="/#services" className="transition-colors hover:text-primary">Services</Link>
-          <Link href="/#contact" className="transition-colors hover:text-primary">Contact</Link>
+          <Link href="/#services" className="transition-colors hover:text-primary">Serviços</Link>
+          <Link href="/#contact" className="transition-colors hover:text-primary">Contacto</Link>
         </nav>
         <div className="flex flex-1 items-center justify-end space-x-4">
           <Button asChild>
-            <Link href="/book">Book Appointment</Link>
+            <Link href="/book">Marcar Consulta</Link>
           </Button>
           <Button variant="ghost" size="sm" asChild>
             <Link href="/login">Admin</Link>

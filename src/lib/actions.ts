@@ -13,8 +13,8 @@ let appointments: Appointment[] = [];
 const MAX_APPOINTMENTS_PER_DAY = 5;
 
 const appointmentSchema = z.object({
-  clientName: z.string().min(2, { message: "Name must be at least 2 characters." }),
-  clientEmail: z.string().email({ message: "Please enter a valid email." }),
+  clientName: z.string().min(2, { message: "O nome deve ter pelo menos 2 caracteres." }),
+  clientEmail: z.string().email({ message: "Por favor, insira um email válido." }),
   date: z.string(),
   time: z.string(),
   service: z.string(),
@@ -44,7 +44,7 @@ export async function createAppointment(prevState: any, formData: FormData) {
   if (!validatedFields.success) {
     return {
       errors: validatedFields.error.flatten().fieldErrors,
-      message: 'Validation failed.',
+      message: 'A validação falhou.',
     };
   }
 
@@ -52,7 +52,7 @@ export async function createAppointment(prevState: any, formData: FormData) {
   const todaysBookings = appointments.filter(appt => appt.date === date).length;
 
   if (todaysBookings >= MAX_APPOINTMENTS_PER_DAY) {
-    return { message: 'This day is fully booked.' };
+    return { message: 'Este dia está totalmente reservado.' };
   }
 
   const newAppointment: Appointment = {
@@ -72,13 +72,13 @@ export async function updateAppointment(id: string, prevState: any, formData: Fo
   if (!validatedFields.success) {
     return {
       errors: validatedFields.error.flatten().fieldErrors,
-      message: 'Validation failed.',
+      message: 'A validação falhou.',
     };
   }
   
   const appointmentIndex = appointments.findIndex(appt => appt.id === id);
   if (appointmentIndex === -1) {
-    return { message: 'Appointment not found.' };
+    return { message: 'Marcação não encontrada.' };
   }
 
   appointments[appointmentIndex] = { ...appointments[appointmentIndex], ...validatedFields.data };
@@ -95,7 +95,7 @@ export async function deleteAppointment(id: string) {
 
 export async function exportAppointments() {
   const data = await getAppointments();
-  if (data.length === 0) return "No appointments to export.";
+  if (data.length === 0) return "Nenhuma marcação para exportar.";
   
   const headers = "id,clientName,clientEmail,date,time,service";
   const rows = data.map(appt => 
@@ -117,7 +117,7 @@ export async function login(prevState: any, formData: FormData) {
   const validatedFields = loginSchema.safeParse(Object.fromEntries(formData.entries()));
 
   if (!validatedFields.success) {
-    return { message: 'Invalid data.' };
+    return { message: 'Dados inválidos.' };
   }
 
   const { username, password } = validatedFields.data;
@@ -129,7 +129,7 @@ export async function login(prevState: any, formData: FormData) {
     redirect('/admin/dashboard');
   }
 
-  return { message: 'Invalid username or password.' };
+  return { message: 'Utilizador ou palavra-passe inválidos.' };
 }
 
 export async function logout() {

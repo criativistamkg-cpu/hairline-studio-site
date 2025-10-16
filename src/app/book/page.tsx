@@ -12,8 +12,8 @@ export default async function BookAppointmentPage() {
       <main className="flex-grow container py-12 md:py-20">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-10">
-            <h1 className="text-3xl md:text-4xl font-headline text-primary">Book Your Appointment</h1>
-            <p className="mt-2 text-lg text-muted-foreground">Select a date and time that works for you.</p>
+            <h1 className="text-3xl md:text-4xl font-headline text-primary">Faça a sua Marcação</h1>
+            <p className="mt-2 text-lg text-muted-foreground">Selecione uma data e hora que funcione para si.</p>
           </div>
           <BookingForm dailyBookings={dailyBookings} />
         </div>

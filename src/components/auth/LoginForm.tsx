@@ -13,7 +13,7 @@ function SubmitButton() {
   const { pending } = useFormStatus();
   return (
     <Button type="submit" className="w-full" disabled={pending}>
-      {pending ? "Signing In..." : "Sign In"}
+      {pending ? "A entrar..." : "Entrar"}
     </Button>
   );
 }
@@ -25,7 +25,7 @@ export function LoginForm() {
   useEffect(() => {
     if (state?.message) {
       toast({
-        title: "Login Failed",
+        title: "Falha no Login",
         description: state.message,
         variant: "destructive",
       });
@@ -35,7 +35,7 @@ export function LoginForm() {
   return (
     <form action={dispatch} className="space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="username">Username</Label>
+        <Label htmlFor="username">Utilizador</Label>
         <Input
           id="username"
           name="username"
@@ -45,7 +45,7 @@ export function LoginForm() {
         />
       </div>
       <div className="space-y-2">
-        <Label htmlFor="password">Password</Label>
+        <Label htmlFor="password">Palavra-passe</Label>
         <Input
           id="password"
           name="password"

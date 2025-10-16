@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import { format } from "date-fns";
+import { pt } from 'date-fns/locale';
 import { Calendar as CalendarIcon } from "lucide-react";
 import { createAppointment } from "@/lib/actions";
 import { services, timeSlots } from "@/lib/data";
@@ -22,7 +23,7 @@ function SubmitButton() {
   const { pending } = useFormStatus();
   return (
     <Button type="submit" className="w-full" size="lg" disabled={pending}>
-      {pending ? "Booking..." : "Confirm Appointment"}
+      {pending ? "A marcar..." : "Confirmar Marcação"}
     </Button>
   );
 }
@@ -43,7 +44,7 @@ export function BookingForm({ dailyBookings }: { dailyBookings: Record<string, n
       <form action={dispatch}>
         <CardContent className="p-6 grid md:grid-cols-2 gap-8">
           <div className="space-y-4">
-             <h3 className="font-headline text-xl text-primary">1. Select Date & Time</h3>
+             <h3 className="font-headline text-xl text-primary">1. Selecione a Data e Hora</h3>
              <Popover>
               <PopoverTrigger asChild>
                 <Button
@@ -54,7 +55,7 @@ export function BookingForm({ dailyBookings }: { dailyBookings: Record<string, n
                   )}
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {date ? format(date, "PPP") : <span>Pick a date</span>}
+                  {date ? format(date, "PPP", { locale: pt }) : <span>Escolha uma data</span>}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0">
@@ -64,13 +65,14 @@ export function BookingForm({ dailyBookings }: { dailyBookings: Record<string, n
                   onSelect={setDate}
                   disabled={disabledDays}
                   initialFocus
+                  locale={pt}
                 />
               </PopoverContent>
             </Popover>
             <input type="hidden" name="date" value={date ? format(date, "yyyy-MM-dd") : ""} />
             {date && (
                 <div>
-                    <Label>Select a Time</Label>
+                    <Label>Selecione uma Hora</Label>
                     <div className="grid grid-cols-3 gap-2 mt-2">
                         {timeSlots.map(time => (
                             <Button 
@@ -88,22 +90,22 @@ export function BookingForm({ dailyBookings }: { dailyBookings: Record<string, n
             <input type="hidden" name="time" value={selectedTime || ""} />
           </div>
           <div className="space-y-4">
-             <h3 className="font-headline text-xl text-primary">2. Your Details</h3>
+             <h3 className="font-headline text-xl text-primary">2. Os Seus Detalhes</h3>
             <div>
-              <Label htmlFor="clientName">Full Name</Label>
-              <Input id="clientName" name="clientName" placeholder="John Doe" required />
+              <Label htmlFor="clientName">Nome Completo</Label>
+              <Input id="clientName" name="clientName" placeholder="João Ninguém" required />
               {state?.errors?.clientName && <p className="text-sm text-destructive mt-1">{state.errors.clientName}</p>}
             </div>
             <div>
-              <Label htmlFor="clientEmail">Email Address</Label>
-              <Input id="clientEmail" name="clientEmail" type="email" placeholder="you@example.com" required />
+              <Label htmlFor="clientEmail">Endereço de Email</Label>
+              <Input id="clientEmail" name="clientEmail" type="email" placeholder="voce@exemplo.com" required />
               {state?.errors?.clientEmail && <p className="text-sm text-destructive mt-1">{state.errors.clientEmail}</p>}
             </div>
             <div>
-              <Label htmlFor="service">Service</Label>
+              <Label htmlFor="service">Serviço</Label>
               <Select name="service" required>
                 <SelectTrigger id="service">
-                  <SelectValue placeholder="Select a service" />
+                  <SelectValue placeholder="Selecione um serviço" />
                 </SelectTrigger>
                 <SelectContent>
                   {services.map(s => <SelectItem key={s.name} value={s.name}>{s.name} - {s.price}</SelectItem>)}
@@ -116,7 +118,7 @@ export function BookingForm({ dailyBookings }: { dailyBookings: Record<string, n
         <CardFooter className="flex-col items-stretch gap-4 p-6 border-t">
           {state?.message && (
             <Alert variant="destructive">
-              <AlertTitle>Booking Error</AlertTitle>
+              <AlertTitle>Erro na Marcação</AlertTitle>
               <AlertDescription>{state.message}</AlertDescription>
             </Alert>
           )}

@@ -21,13 +21,13 @@ export function HeroSection() {
       <div className="absolute inset-0 bg-black/50" />
       <div className="relative z-10 text-center p-4">
         <h1 className="text-4xl md:text-6xl font-headline mb-4 drop-shadow-md">
-          Rustic Charm, Modern Style
+          Charme Rústico, Estilo Moderno
         </h1>
         <p className="max-w-2xl mx-auto md:text-xl mb-8 drop-shadow-sm">
-          Experience the art of hairstyling in a unique, rustic setting. Your journey to perfect hair starts here.
+          Experimente a arte do penteado num ambiente rústico e único. A sua jornada para o cabelo perfeito começa aqui.
         </p>
         <Button size="lg" asChild>
-          <Link href="/book">Book Your Appointment</Link>
+          <Link href="/book">Faça a sua Marcação</Link>
         </Button>
       </div>
     </section>

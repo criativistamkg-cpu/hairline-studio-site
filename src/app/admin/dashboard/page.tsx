@@ -19,7 +19,7 @@ export default async function AdminDashboard() {
     <div className="min-h-screen bg-secondary/30">
       <header className="bg-background border-b">
         <div className="container flex h-16 items-center justify-between">
-          <h1 className="text-xl font-headline text-primary">Admin Dashboard</h1>
+          <h1 className="text-xl font-headline text-primary">Painel de Administração</h1>
           <div className="flex items-center gap-2">
              <form action={async () => {
                 "use server";
@@ -30,10 +30,10 @@ export default async function AdminDashboard() {
                 console.log("--- EXPORTED DATA ---");
                 console.log(csvData);
              }}>
-                <Button variant="outline" size="sm"><Download className="mr-2 h-4 w-4" />Export CSV</Button>
+                <Button variant="outline" size="sm"><Download className="mr-2 h-4 w-4" />Exportar CSV</Button>
             </form>
             <form action={logout}>
-              <Button variant="ghost" size="sm"><LogOut className="mr-2 h-4 w-4" />Logout</Button>
+              <Button variant="ghost" size="sm"><LogOut className="mr-2 h-4 w-4" />Sair</Button>
             </form>
           </div>
         </div>
@@ -41,11 +41,11 @@ export default async function AdminDashboard() {
       <main className="container py-8">
         <Card>
           <CardHeader>
-            <CardTitle>All Appointments</CardTitle>
+            <CardTitle>Todas as Marcações</CardTitle>
             <CardDescription>
               {appointments.length > 0 
-                ? `Total of ${appointments.length} appointment(s).`
-                : "No appointments booked yet."}
+                ? `Total de ${appointments.length} marcação(ões).`
+                : "Ainda não foram feitas marcações."}
             </CardDescription>
           </CardHeader>
           <CardContent>

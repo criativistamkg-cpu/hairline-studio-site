@@ -10,8 +10,8 @@ export default function LoginPage() {
       <main className="flex-grow flex items-center justify-center p-4">
         <Card className="w-full max-w-sm">
           <CardHeader>
-            <CardTitle className="font-headline text-2xl">Admin Login</CardTitle>
-            <CardDescription>Enter your credentials to access the dashboard.</CardDescription>
+            <CardTitle className="font-headline text-2xl">Login de Administrador</CardTitle>
+            <CardDescription>Insira as suas credenciais para aceder ao painel.</CardDescription>
           </CardHeader>
           <CardContent>
             <LoginForm />

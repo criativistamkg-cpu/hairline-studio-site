@@ -21,6 +21,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { deleteAppointment } from "@/lib/actions";
+import { redirect } from 'next/navigation';
 
 export default async function MyAppointmentPage({ params, searchParams }: { params: { id: string }, searchParams: { success?: string } }) {
   const appointment = await getAppointmentById(params.id);
@@ -36,14 +37,14 @@ export default async function MyAppointmentPage({ params, searchParams }: { para
         <div className="w-full max-w-2xl space-y-4">
             {searchParams.success && (
                 <Alert variant="default" className="bg-green-100 dark:bg-green-900/50 border-green-500 text-green-800 dark:text-green-300">
-                    <AlertTitle className="font-headline">Success!</AlertTitle>
-                    <AlertDescription>Your appointment has been updated.</AlertDescription>
+                    <AlertTitle className="font-headline">Sucesso!</AlertTitle>
+                    <AlertDescription>A sua marcação foi atualizada.</AlertDescription>
                 </Alert>
             )}
              <Card>
                 <CardHeader>
-                    <CardTitle className="font-headline text-2xl">Your Appointment</CardTitle>
-                    <CardDescription>Thank you for booking with Hairline Studio. Here are your details.</CardDescription>
+                    <CardTitle className="font-headline text-2xl">A Sua Marcação</CardTitle>
+                    <CardDescription>Obrigado por marcar no Hairline Studio. Aqui estão os seus detalhes.</CardDescription>
                 </CardHeader>
                 <CardContent className="grid gap-4 sm:grid-cols-2">
                     <div className="flex items-center gap-3">
@@ -56,7 +57,7 @@ export default async function MyAppointmentPage({ params, searchParams }: { para
                     </div>
                     <div className="flex items-center gap-3">
                         <Calendar className="w-5 h-5 text-primary" />
-                        <span>{format(new Date(appointment.date), 'EEEE, MMMM d, yyyy')}</span>
+                        <span>{format(new Date(appointment.date), 'EEEE, d \'de\' MMMM, yyyy')}</span>
                     </div>
                      <div className="flex items-center gap-3">
                         <Clock className="w-5 h-5 text-primary" />
@@ -69,27 +70,27 @@ export default async function MyAppointmentPage({ params, searchParams }: { para
                 </CardContent>
                 <CardFooter className="flex-col sm:flex-row justify-end gap-2 border-t pt-6">
                     <Button variant="outline" asChild>
-                        <Link href={`/my-appointment/${appointment.id}/edit`}><Pencil className="mr-2 h-4 w-4"/> Modify Appointment</Link>
+                        <Link href={`/my-appointment/${appointment.id}/edit`}><Pencil className="mr-2 h-4 w-4"/> Modificar Marcação</Link>
                     </Button>
                     <AlertDialog>
                         <AlertDialogTrigger asChild>
-                            <Button variant="destructive"><Trash2 className="mr-2 h-4 w-4"/> Cancel Appointment</Button>
+                            <Button variant="destructive"><Trash2 className="mr-2 h-4 w-4"/> Cancelar Marcação</Button>
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                             <AlertDialogHeader>
-                                <AlertDialogTitle>Are you sure you want to cancel?</AlertDialogTitle>
+                                <AlertDialogTitle>Tem a certeza que quer cancelar?</AlertDialogTitle>
                                 <AlertDialogDescription>
-                                This action cannot be undone. You will need to book a new appointment if you change your mind.
+                                Esta ação não pode ser desfeita. Terá de fazer uma nova marcação se mudar de ideias.
                                 </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
-                                <AlertDialogCancel>Keep Appointment</AlertDialogCancel>
+                                <AlertDialogCancel>Manter Marcação</AlertDialogCancel>
                                 <form action={async () => {
                                     "use server";
                                     await deleteAppointment(appointment.id);
                                     redirect('/book?cancelled=true');
                                 }}>
-                                    <AlertDialogAction type="submit">Yes, Cancel It</AlertDialogAction>
+                                    <AlertDialogAction type="submit">Sim, Cancelar</AlertDialogAction>
                                 </form>
                             </AlertDialogFooter>
                         </AlertDialogContent>
