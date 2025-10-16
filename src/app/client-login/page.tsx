@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { useEffect, useState, useActionState } from 'react';
+import { useEffect, useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/firebase';
 import { 
@@ -18,8 +18,7 @@ import {
 } from 'firebase/auth';
 import { redirect } from 'next/navigation';
 
-function SubmitButton({ text = "Entrar" }: { text?: string }) {
-  const { pending } = useFormStatus();
+function SubmitButton({ text = "Entrar", pending }: { text?: string, pending: boolean }) {
   return (
     <Button type="submit" className="w-full" disabled={pending}>
       {pending ? "A processar..." : text}
@@ -30,6 +29,7 @@ function SubmitButton({ text = "Entrar" }: { text?: string }) {
 export default function ClientLoginPage() {
     const auth = useAuth();
     const [error, setError] = useState<string | null>(null);
+    const [isPending, setIsPending] = useState(false);
     const { toast } = useToast();
 
     useEffect(() => {
@@ -46,6 +46,7 @@ export default function ClientLoginPage() {
     const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         setError(null);
+        setIsPending(true);
         const formData = new FormData(event.currentTarget);
         const email = formData.get('email') as string;
         const password = formData.get('password') as string;
@@ -53,13 +54,7 @@ export default function ClientLoginPage() {
         try {
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
             const idToken = await userCredential.user.getIdToken();
-            
-            const sessionFormData = new FormData();
-            sessionFormData.append('idToken', idToken);
-            
-            const formAction = createSession.bind(null, idToken);
-            formAction();
-
+            await createSession(idToken);
         } catch (err: any) {
             let message = 'Ocorreu um erro ao fazer login.';
             if (err.code === 'auth/invalid-credential' || err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
@@ -67,12 +62,15 @@ export default function ClientLoginPage() {
             }
             setError(message);
             toast({ title: "Erro", description: message, variant: 'destructive' });
+        } finally {
+            setIsPending(false);
         }
     };
 
     const handleSignup = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         setError(null);
+        setIsPending(true);
         const formData = new FormData(event.currentTarget);
         const email = formData.get('email') as string;
         const password = formData.get('password') as string;
@@ -80,13 +78,7 @@ export default function ClientLoginPage() {
         try {
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const idToken = await userCredential.user.getIdToken();
-
-            const sessionFormData = new FormData();
-            sessionFormData.append('idToken', idToken);
-
-            const formAction = createSession.bind(null, idToken);
-            formAction();
-
+            await createSession(idToken);
         } catch (err: any) {
             let message = 'Ocorreu um erro ao criar a conta.';
             if (err.code === 'auth/email-already-in-use') {
@@ -94,6 +86,8 @@ export default function ClientLoginPage() {
             }
             setError(message);
             toast({ title: "Erro", description: message, variant: 'destructive' });
+        } finally {
+            setIsPending(false);
         }
     };
 
@@ -122,7 +116,7 @@ export default function ClientLoginPage() {
                                 <AlertDescription>{error}</AlertDescription>
                             </Alert>
                         )}
-                        <SubmitButton />
+                        <SubmitButton pending={isPending} />
                     </form>
                 </CardContent>
             </Card>
@@ -146,7 +140,7 @@ export default function ClientLoginPage() {
                                 <AlertDescription>{error}</AlertDescription>
                             </Alert>
                         )}
-                        <SubmitButton text="Criar Conta" />
+                        <SubmitButton text="Criar Conta" pending={isPending} />
                     </form>
                 </CardContent>
             </Card>
