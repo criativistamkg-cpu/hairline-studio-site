@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import * as Tone from 'tone';
-import { ScissorIcon } from './icons/ScissorIcon';
+import Image from 'next/image';
 
 export function CustomCursor() {
   const [position, setPosition] = useState({ x: -100, y: -100 });
@@ -22,7 +22,6 @@ export function CustomCursor() {
     }).toDestination();
     
     synthRef.current.volume.value = -12;
-
 
     const handleMouseMove = (e: MouseEvent) => {
       setPosition({ x: e.clientX, y: e.clientY });
@@ -65,7 +64,17 @@ export function CustomCursor() {
         transform: `translate(${position.x}px, ${position.y}px)`,
       }}
     >
-      <ScissorIcon isClicking={isClicking} />
+       <div 
+        className={`relative w-10 h-10 transition-transform duration-100 ease-in-out ${isClicking ? 'rotate-[-25deg]' : 'rotate-[-45deg]'}`}
+      >
+        <Image
+            src="https://i.ibb.co/6n1yF3M/scissors-cursor-1.png"
+            alt="tesoura cursor"
+            width={40}
+            height={40}
+            className="drop-shadow-md"
+        />
+      </div>
     </div>
   );
 }
