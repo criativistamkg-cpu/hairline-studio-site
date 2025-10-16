@@ -57,6 +57,17 @@ export default function ClientDashboardPage() {
       )
     }
     
+    if (appointments && appointments.length === 0) {
+        return (
+            <div className="text-center text-muted-foreground">
+                <p>Ainda não tem marcações.</p>
+                <Button asChild variant="link" className="mt-2">
+                    <Link href="/book">Fazer a primeira marcação</Link>
+                </Button>
+            </div>
+        )
+    }
+
     return (
         <AppointmentsTable appointments={appointments || []} />
     )
