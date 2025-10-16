@@ -44,11 +44,16 @@ export function CustomCursor() {
     window.addEventListener('mousedown', handleMouseDown);
     window.addEventListener('mouseup', handleMouseUp);
     
+    // Hide the default cursor
+    document.body.style.cursor = 'none';
+
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mousedown', handleMouseDown);
       window.removeEventListener('mouseup', handleMouseUp);
       synthRef.current?.dispose();
+      // Restore default cursor on cleanup
+      document.body.style.cursor = 'auto';
     };
   }, []);
 
