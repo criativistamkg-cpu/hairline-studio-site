@@ -1,5 +1,6 @@
-import { Scissors, Facebook, Instagram, Twitter } from 'lucide-react';
+import { Facebook, Instagram, Twitter } from 'lucide-react';
 import Link from 'next/link';
+import { HairlinesLogo } from '../icons/HairlinesLogo';
 
 export function Footer() {
   return (
@@ -8,8 +9,7 @@ export function Footer() {
         <div className="grid md:grid-cols-3 gap-8">
           <div className="space-y-2">
             <Link href="/" className="flex items-center space-x-2">
-              <Scissors className="h-6 w-6 text-primary" />
-              <span className="font-bold font-headline text-lg">Hairline Studio</span>
+              <HairlinesLogo className="h-10 w-auto text-primary" />
             </Link>
             <p className="text-sm text-muted-foreground">Rustic Charm, Modern Style.</p>
           </div>
