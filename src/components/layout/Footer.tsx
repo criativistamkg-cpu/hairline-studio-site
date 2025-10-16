@@ -8,8 +8,8 @@ export function Footer() {
       <div className="container py-8">
         <div className="grid md:grid-cols-3 gap-8">
           <div className="space-y-2">
-            <Link href="/" className="flex items-center space-x-2">
-              <HairlinesLogo className="h-10 w-auto text-primary" />
+            <Link href="/" className="inline-block">
+              <HairlinesLogo className="text-primary" />
             </Link>
             <p className="text-sm text-muted-foreground">Charme rústico, estilo moderno.</p>
           </div>
