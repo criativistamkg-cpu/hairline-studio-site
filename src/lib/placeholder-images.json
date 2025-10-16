@@ -2,9 +2,9 @@
   "placeholderImages": [
     {
       "id": "hero-salon",
-      "description": "Classic barber tools on a wooden surface.",
-      "imageUrl": "https://picsum.photos/seed/barber2/1920/1080",
-      "imageHint": "barber tools"
+      "description": "Interior do salão de cabeleireiro.",
+      "imageUrl": "https://i.ibb.co/C04YyVq/pin-shop.png",
+      "imageHint": "barber shop"
     }
   ]
 }
