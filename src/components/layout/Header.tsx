@@ -14,10 +14,28 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { User as UserIcon, LogOut, LayoutDashboard } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useToast } from '@/hooks/use-toast';
 
 
 export function Header() {
   const { user, isUserLoading } = useUser();
+  const router = useRouter();
+  const { toast } = useToast();
+
+  const handleBookingClick = () => {
+    if (isUserLoading) return; // Do nothing if user state is not determined yet
+
+    if (user) {
+      router.push('/book');
+    } else {
+      toast({
+        title: "Login Necessário",
+        description: "Precisa de fazer login ou criar uma conta para poder marcar.",
+      });
+      router.push('/client-login');
+    }
+  };
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -30,8 +48,8 @@ export function Header() {
           <Link href="/#contact" className="transition-colors hover:text-primary">Contacto</Link>
         </nav>
         <div className="flex flex-1 items-center justify-end space-x-4">
-          <Button asChild>
-            <Link href="/book">Marcar Consulta</Link>
+          <Button onClick={handleBookingClick} disabled={isUserLoading}>
+            {isUserLoading ? "A carregar..." : "Marcar Consulta"}
           </Button>
 
           {isUserLoading ? (
