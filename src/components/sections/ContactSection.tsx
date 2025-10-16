@@ -17,7 +17,7 @@ export function ContactSection() {
             <CardContent className="space-y-4 text-muted-foreground">
               <div className="flex items-start space-x-4">
                 <MapPin className="h-5 w-5 mt-1 text-primary" />
-                <span>R. Dr. Alberto Iria 11, 8000-511 Faro</span>
+                <span>R. Dr. Alberto Iria 11, 8700-348 Olhão</span>
               </div>
               <div className="flex items-start space-x-4">
                 <Phone className="h-5 w-5 mt-1 text-primary" />
@@ -31,8 +31,8 @@ export function ContactSection() {
                 <Clock className="h-5 w-5 mt-1 text-primary" />
                 <div>
                   <p className="font-semibold text-foreground">Horário de Funcionamento</p>
-                  <p>Terça a Sábado: 9:00 - 19:00</p>
-                  <p>Domingo e Segunda: Fechado</p>
+                  <p>Segunda a Sábado: 9:00 - 20:00</p>
+                  <p>Domingo: Fechado</p>
                 </div>
               </div>
             </CardContent>
