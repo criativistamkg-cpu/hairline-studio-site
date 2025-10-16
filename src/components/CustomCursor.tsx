@@ -68,7 +68,7 @@ export function CustomCursor() {
         className={`relative w-10 h-10 transition-transform duration-100 ease-in-out ${isClicking ? 'rotate-[-25deg]' : 'rotate-[-45deg]'}`}
       >
         <Image
-            src="https://i.ibb.co/BHYtFCV2/7d5630edbe3641611737b87dcc508641.png"
+            src="https://i.ibb.co/BHYtFCV/7d5630edbe3641611737b87dcc508641.png"
             alt="tesoura cursor"
             width={40}
             height={40}
