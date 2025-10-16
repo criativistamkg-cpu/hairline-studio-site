@@ -3,7 +3,6 @@ import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { SeasonalWrapper } from '@/components/layout/SeasonalWrapper';
 import { CustomCursor } from '@/components/CustomCursor';
-import { SpeedInsights } from "@vercel/speed-insights/next"
 
 export const metadata: Metadata = {
   title: 'Hairline Studio Online',
@@ -27,7 +26,6 @@ export default function RootLayout({
         <CustomCursor />
         {children}
         <Toaster />
-        <SpeedInsights />
       </body>
     </html>
   );
