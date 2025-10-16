@@ -17,7 +17,7 @@ export function ContactSection() {
             <CardContent className="space-y-4 text-muted-foreground">
               <div className="flex items-start space-x-4">
                 <MapPin className="h-5 w-5 mt-1 text-primary" />
-                <span>R. Dr. Alberto Iria 11, 8700-348 Olhão</span>
+                <span>N125 85, 8700-254 Olhão</span>
               </div>
               <div className="flex items-start space-x-4">
                 <Phone className="h-5 w-5 mt-1 text-primary" />
@@ -40,7 +40,7 @@ export function ContactSection() {
           <Card className="overflow-hidden border-primary/20">
             <div className="h-80 w-full bg-muted">
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3187.970591241517!2d-7.840256988889419!3d37.03477737207604!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd0554d2442f91dd%3A0x914b691aa208256!2sHairlines%20Salon%20Olh%C3%A3o!5e0!3m2!1spt-PT!2spt!4v1715875638289!5m2!1spt-PT!2spt"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d12751.280148729112!2d-7.854095811090095!3d37.03965564883901!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd1b37385a55639b%3A0x86c3592631551846!2sN125%2085%2C%208700-254%20Olh%C3%A3o!5e0!3m2!1spt-PT!2spt!4v1721147575807!5m2!1spt-PT!2spt"
                 width="100%"
                 height="100%"
                 style={{ border: 0 }}
