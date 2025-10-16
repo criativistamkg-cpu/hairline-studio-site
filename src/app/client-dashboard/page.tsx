@@ -1,7 +1,7 @@
 'use client';
 
 import { useUser, useFirestore, useMemoFirebase, useCollection } from '@/firebase';
-import { collection, query, where } from 'firebase/firestore';
+import { collection, query, where, Firestore } from 'firebase/firestore';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -17,14 +17,18 @@ export default function ClientDashboardPage() {
   const firestore = useFirestore();
 
   const appointmentsQuery = useMemoFirebase(() => {
-    if (!firestore || !user?.email) return null;
+    // Only construct the query if both firestore and user.email are available.
+    if (!firestore || !user?.email) {
+      return null;
+    }
     return query(collection(firestore, 'appointments'), where('clientEmail', '==', user.email));
-  }, [firestore, user]);
+  }, [firestore, user?.email]); // Depend on user.email directly for clarity
 
   const { data: appointments, isLoading: isLoadingAppointments, error: appointmentsError } = useCollection<Appointment>(appointmentsQuery);
 
   const renderContent = () => {
-    if (isUserLoading || (isLoadingAppointments && !appointments)) {
+    // Show skeleton loader if user is loading OR if appointments are loading and we don't have any data yet.
+    if (isUserLoading || (isLoadingAppointments && appointments === null)) {
       return (
         <div className="space-y-4">
           <Skeleton className="h-8 w-1/2" />
@@ -40,8 +44,8 @@ export default function ClientDashboardPage() {
     if (userError || appointmentsError) {
        return (
         <Alert variant="destructive">
-          <AlertTitle>Error</AlertTitle>
-          <AlertDescription>{userError?.message || appointmentsError?.message || 'Failed to load your data. Please try again later.'}</AlertDescription>
+          <AlertTitle>Erro</AlertTitle>
+          <AlertDescription>{userError?.message || appointmentsError?.message || 'Falha ao carregar os seus dados. Por favor, tente novamente mais tarde.'}</AlertDescription>
         </Alert>
        )
     }

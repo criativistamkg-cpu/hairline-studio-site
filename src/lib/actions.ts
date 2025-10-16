@@ -5,7 +5,7 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import type { Appointment } from './types';
-import { getFirestore, collection, getDocs, addDoc, getDoc, doc, updateDoc, deleteDoc, query, where, Timestamp } from 'firebase/firestore';
+import { collection, getDocs, addDoc, getDoc, doc, updateDoc, deleteDoc, query, where, Timestamp } from 'firebase/firestore';
 import { adminFirestore } from '@/firebase/server';
 
 const appointmentSchema = z.object({
@@ -25,7 +25,7 @@ const appointmentsCollection = collection(adminFirestore, 'appointments');
 
 export async function getAppointments() {
     try {
-        const snapshot = await getDocs(query(appointmentsCollection));
+        const snapshot = await getDocs(appointmentsCollection);
         const appointments: Appointment[] = snapshot.docs.map(doc => ({
             id: doc.id,
             ...(doc.data() as Omit<Appointment, 'id'>)
@@ -59,10 +59,12 @@ export async function getDailyBookingsCount() {
         const snapshot = await getDocs(appointmentsCollection);
         const counts: Record<string, number> = {};
         snapshot.forEach(doc => {
-            const appt = doc.data() as Appointment;
-            // Ensure date is in YYYY-MM-DD format
-            const dateStr = appt.date.split('T')[0];
-            counts[dateStr] = (counts[dateStr] || 0) + 1;
+            const apptData = doc.data();
+            if(apptData.date) {
+                 // Ensure date is in YYYY-MM-DD format
+                const dateStr = apptData.date.split('T')[0];
+                counts[dateStr] = (counts[dateStr] || 0) + 1;
+            }
         });
         return counts;
     } catch (error) {
