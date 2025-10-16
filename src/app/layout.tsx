@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { SeasonalWrapper } from '@/components/layout/SeasonalWrapper';
-import { CustomCursor } from '@/components/CustomCursor';
 
 export const metadata: Metadata = {
   title: 'Hairline Studio Online',
@@ -23,7 +22,6 @@ export default function RootLayout({
       </head>
       <body className="font-body antialiased">
         <SeasonalWrapper />
-        <CustomCursor />
         {children}
         <Toaster />
       </body>
