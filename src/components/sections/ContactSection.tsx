@@ -1,6 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Phone, Mail, MapPin, Clock } from "lucide-react";
-import Image from "next/image";
 
 export function ContactSection() {
   return (
@@ -40,14 +39,16 @@ export function ContactSection() {
           </Card>
           <Card className="overflow-hidden border-primary/20">
             <div className="h-80 w-full bg-muted">
-              <Image
-                src="https://picsum.photos/seed/map1/600/400"
-                alt="Mapa a mostrar a localização do salão"
-                width={600}
-                height={400}
-                className="w-full h-full object-cover"
-                data-ai-hint="street map"
-              />
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3187.970591241517!2d-7.840256988889419!3d37.03477737207604!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd0554d2442f91dd%3A0x914b691aa208256!2sHairlines%20Salon%20Olh%C3%A3o!5e0!3m2!1spt-PT!2spt!4v1715875638289!5m2!1spt-PT!2spt"
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                allowFullScreen={false}
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                title="Hairlines Salon Location"
+              ></iframe>
             </div>
           </Card>
         </div>
