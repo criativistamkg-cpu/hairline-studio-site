@@ -1,4 +1,4 @@
-import { Facebook, Instagram, Twitter } from 'lucide-react';
+import { Facebook, Instagram } from 'lucide-react';
 import Link from 'next/link';
 import { HairlinesLogo } from '../icons/HairlinesLogo';
 
@@ -24,9 +24,8 @@ export function Footer() {
           <div>
             <h3 className="font-headline text-md font-semibold mb-2">Siga-nos</h3>
             <div className="flex space-x-4">
-              <Link href="#" className="text-muted-foreground hover:text-primary"><Facebook size={20} /></Link>
-              <Link href="#" className="text-muted-foreground hover:text-primary"><Instagram size={20} /></Link>
-              <Link href="#" className="text-muted-foreground hover:text-primary"><Twitter size={20} /></Link>
+              <Link href="https://www.facebook.com/FaustoLopesHair" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary"><Facebook size={20} /></Link>
+              <Link href="https://www.instagram.com/hairlinesolhao/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary"><Instagram size={20} /></Link>
             </div>
           </div>
         </div>
