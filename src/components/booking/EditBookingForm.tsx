@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useFormState, useFormStatus } from "react-dom";
+import { useState, useActionState } from "react";
+import { useFormStatus } from "react-dom";
 import { format } from "date-fns";
 import { pt } from 'date-fns/locale';
 import { Calendar as CalendarIcon } from "lucide-react";
@@ -34,7 +34,7 @@ export function EditBookingForm({ appointment, dailyBookings }: { appointment: A
   const [selectedTime, setSelectedTime] = useState<string | undefined>(appointment.time);
   
   const updateAppointmentWithId = updateAppointment.bind(null, appointment.id);
-  const [state, dispatch] = useFormState(updateAppointmentWithId, undefined);
+  const [state, dispatch] = useActionState(updateAppointmentWithId, undefined);
   
   const disabledDays = Object.entries(dailyBookings)
     .filter(([dateStr, count]) => count >= MAX_APPOINTMENTS_PER_DAY && dateStr !== appointment.date)

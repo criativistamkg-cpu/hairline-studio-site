@@ -2,13 +2,13 @@
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { useFormState, useFormStatus } from 'react-dom';
+import { useFormStatus } from 'react-dom';
 import { clientLogin, clientSignup } from '@/lib/auth/actions';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { useEffect } from 'react';
+import { useEffect, useActionState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
 function SubmitButton() {
@@ -21,8 +21,8 @@ function SubmitButton() {
 }
 
 export default function ClientLoginPage() {
-    const [loginState, loginDispatch] = useFormState(clientLogin, undefined);
-    const [signupState, signupDispatch] = useFormState(clientSignup, undefined);
+    const [loginState, loginDispatch] = useActionState(clientLogin, undefined);
+    const [signupState, signupDispatch] = useActionState(clientSignup, undefined);
     const { toast } = useToast();
 
     useEffect(() => {
@@ -69,7 +69,7 @@ export default function ClientLoginPage() {
                 <CardHeader>
                     <CardTitle className="font-headline text-2xl">Criar Conta</CardTitle>
                     <CardDescription>Novo por aqui? Crie uma conta para gerir as suas marcações.</CardDescription>
-                </CardHeader>
+                </header>
                 <CardContent>
                     <form action={signupDispatch} className="space-y-4">
                         <div className="space-y-2">
