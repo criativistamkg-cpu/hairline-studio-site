@@ -83,6 +83,7 @@
   }
   body {
     @apply bg-background text-foreground;
+    cursor: none;
   }
   
   body::after {
@@ -93,5 +94,9 @@
     z-index: -1;
     pointer-events: none;
     transition: background-color 0.5s ease;
+  }
+
+  a, button, [role="button"] {
+    cursor: none;
   }
 }
