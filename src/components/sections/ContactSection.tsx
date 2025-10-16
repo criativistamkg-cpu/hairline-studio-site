@@ -23,6 +23,10 @@ export function ContactSection() {
                 <Phone className="h-5 w-5 mt-1 text-primary" />
                 <span>289 042 984</span>
               </div>
+               <div className="flex items-start space-x-4">
+                <Mail className="h-5 w-5 mt-1 text-primary" />
+                <span>hairlinesolhao@gmail.com</span>
+              </div>
               <div className="flex items-start space-x-4">
                 <Clock className="h-5 w-5 mt-1 text-primary" />
                 <div>
