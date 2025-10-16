@@ -6,7 +6,7 @@ export const HairlinesLogo = ({ className }: { className?: string }) => (
         <Image 
             src="https://i.ibb.co/rKSNmWCT/logo-thin-last-1-1.png" 
             alt="Hairline Studio Logo" 
-            width={180} 
+            width={160} 
             height={40} 
             className="object-contain"
         />
