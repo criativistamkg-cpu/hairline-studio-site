@@ -6,7 +6,7 @@ import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import type { Appointment } from './types';
 import { getFirestore, collection, getDocs, addDoc, getDoc, doc, updateDoc, deleteDoc, query, where, Timestamp } from 'firebase/firestore';
-import { initializeFirebase as initializeAdmin } from '@/firebase/server';
+import { adminFirestore } from '@/firebase/server';
 
 const appointmentSchema = z.object({
   clientName: z.string().min(2, { message: 'O nome deve ter pelo menos 2 caracteres.' }),
@@ -18,9 +18,7 @@ const appointmentSchema = z.object({
 
 const MAX_APPOINTMENTS_PER_DAY = 5;
 
-// --- FIRESTORE SETUP ---
-const { firestore } = initializeAdmin();
-const appointmentsCollection = collection(firestore, 'appointments');
+const appointmentsCollection = collection(adminFirestore, 'appointments');
 
 
 // --- APPOINTMENT ACTIONS ---
@@ -42,7 +40,7 @@ export async function getAppointments() {
 
 export async function getAppointmentById(id: string) {
     try {
-        const docRef = doc(firestore, 'appointments', id);
+        const docRef = doc(adminFirestore, 'appointments', id);
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
@@ -83,7 +81,7 @@ export async function createAppointment(prevState: any, formData: FormData) {
     };
   }
 
-  const { date, clientEmail } = validatedFields.data;
+  const { date } = validatedFields.data;
   
   const q = query(appointmentsCollection, where("date", "==", date));
   const todaysBookingsSnapshot = await getDocs(q);
@@ -122,7 +120,7 @@ export async function updateAppointment(id: string, prevState: any, formData: Fo
   }
   
   try {
-    const docRef = doc(firestore, 'appointments', id);
+    const docRef = doc(adminFirestore, 'appointments', id);
     const docSnap = await getDoc(docRef);
 
     if (!docSnap.exists()) {
@@ -146,7 +144,7 @@ export async function updateAppointment(id: string, prevState: any, formData: Fo
 
 export async function deleteAppointment(id: string) {
     try {
-        const docRef = doc(firestore, 'appointments', id);
+        const docRef = doc(adminFirestore, 'appointments', id);
         await deleteDoc(docRef);
         revalidatePath('/admin/dashboard');
         revalidatePath('/book');
