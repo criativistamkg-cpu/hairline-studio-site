@@ -1,5 +1,5 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { LoginForm } from "@/components/auth/LoginForm";
+import { AdminLoginForm } from "@/components/auth/AdminLoginForm";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 
@@ -14,7 +14,7 @@ export default function LoginPage() {
             <CardDescription>Insira as suas credenciais para aceder ao painel.</CardDescription>
           </CardHeader>
           <CardContent>
-            <LoginForm />
+            <AdminLoginForm />
           </CardContent>
         </Card>
       </main>

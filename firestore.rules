@@ -2,125 +2,104 @@
  * @fileOverview Firestore Security Rules for Hairline Studio Online.
  *
  * Core Philosophy:
- * This ruleset enforces a strict user-ownership model for customer data and their appointments.
- * Only authenticated users can access their own data. Service data is publicly readable.
+ * This ruleset enforces a user-ownership model for customer data, with customers having full control over their profiles and appointments.
+ * Services are publicly readable, but not writable by clients.
+ * Administrative privileges are granted based on the existence of a document in the `/roles_admin/{uid}` collection.
  *
  * Data Structure:
- * - /customers/{customerId}: Stores customer profiles.  Only the customer themselves can read/write their profile.
- * - /customers/{customerId}/appointments/{appointmentId}: Stores appointments for each customer. Only the customer can manage their appointments.
- * - /services/{serviceId}: Stores services offered by the salon. Publicly readable, but only admins can create/update/delete.
- * - /roles_admin/{uid}: Documents in this collection grant admin privileges. Existence of a document with a specific UID grants admin role to that user.
+ * - `/customers/{customerId}`: Stores customer profiles, accessible only by the owning user.
+ * - `/customers/{customerId}/appointments/{appointmentId}`: Stores appointments for each customer, accessible only by the owning customer. Includes denormalized 'customerId' for authorization independence.
+ * - `/services/{serviceId}`: Stores service definitions, publicly readable.
+ * - `/roles_admin/{uid}`: Used to grant administrative privileges.
  *
  * Key Security Decisions:
- * - Listing all users is disallowed.
- * - Service data is public for `get` and `list` operations.
- *
- * Denormalization for Authorization:
- * - Appointments denormalize `customerId` to allow direct authorization without needing to fetch the parent customer document.
+ * - Customers can only access their own data and appointments.
+ * - Services are publicly readable to facilitate display in the application.
+ * - Only administrators can modify services.
+ * - Listing all customers or appointments is disallowed to prevent information disclosure.
+ * - Denormalization: The `appointments` subcollection within each customer document avoids hierarchical authorization dependencies by denormalizing the `customerId` into the appointment document itself.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Checks if the current user is signed in.
-     * @path N/A
-     * @allow N/A
-     * @deny N/A
-     * @principle Requires authentication for certain operations.
-     */
-    function isSignedIn() {
-      return request.auth != null;
-    }
-
-    /**
-     * @description Checks if the current user is the owner of the document.
-     * @path N/A
-     * @allow N/A
-     * @deny N/A
-     * @principle Enforces document ownership.
-     */
-    function isOwner(userId) {
-      return request.auth.uid == userId;
-    }
-
-     /**
-      * @description Checks if the user is an existing owner (signed in and the document exists).
-      * @path N/A
-      * @allow N/A
-      * @deny N/A
-      * @principle Combines authentication and existence check for safe updates and deletes.
-      */
-    function isExistingOwner(userId) {
-      return isSignedIn() && isOwner(userId) && resource != null;
-    }
-
-    /**
-     * @description Checks if the user is an admin.
-     * @path N/A
-     */
-    function isAdmin() {
-        return exists(/databases/$(database)/documents/roles_admin/$(request.auth.uid));
-    }
-
-    /**
-     * @description Rules for customer profiles.
+     * @description Grants access to customer profiles based on ownership.
      * @path /customers/{customerId}
-     * @allow (create) User A creating their own profile (auth.uid == customerId).
-     * @allow (get, update, delete) User A reading/updating/deleting their own profile (auth.uid == customerId).
-     * @deny (create) User A creating a profile with a mismatched ID (auth.uid != customerId).
-     * @deny (get, update, delete) User A trying to access User B's profile (auth.uid != customerId).
-     * @principle Enforces document ownership for customer profiles.
+     * @allow (create) - User with UID 'user_abc' can create a customer profile if customerId == 'user_abc'.
+     * @allow (get, update, delete) - User with UID 'user_abc' can read, update, or delete their profile at /customers/user_abc.
+     * @deny (create) - User with UID 'user_xyz' cannot create a customer profile with customerId 'user_abc'.
+     * @deny (get, update, delete) - User with UID 'user_xyz' cannot read, update, or delete the profile at /customers/user_abc.
+     * @principle Enforces document ownership for writes.
      */
     match /customers/{customerId} {
+      function isOwner(userId) {
+        return request.auth != null && request.auth.uid == userId;
+      }
+      function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
+      }
+
       allow get: if isOwner(customerId);
-      allow list: if false; // Prevent listing all users.
-      allow create: if isSignedIn() && isOwner(customerId) && request.resource.data.id == customerId;
-      allow update: if isExistingOwner(customerId) && request.resource.data.id == resource.data.id; // Enforce immutability of customerId
+      allow list: if false;
+
+      allow create: if isOwner(customerId) && request.resource.data.id == customerId;
+      allow update: if isExistingOwner(customerId) && request.resource.data.id == resource.data.id;
       allow delete: if isExistingOwner(customerId);
     }
 
     /**
-     * @description Rules for appointments within a customer profile.
+     * @description Grants access to appointments based on customer ownership.
      * @path /customers/{customerId}/appointments/{appointmentId}
-     * @allow (create) User A creating an appointment for themselves (auth.uid == customerId).
-     * @allow (get, update, delete) User A reading/updating/deleting their own appointments (auth.uid == customerId).
-     * @deny (create) User A creating an appointment with a mismatched customerId.
-     * @deny (get, update, delete) User A trying to access User B's appointments (auth.uid != customerId).
-     * @principle Enforces document ownership for appointments.  Allows only the owning customer to manage their appointments.
+     * @allow (create) - User with UID 'user_abc' can create an appointment under their profile at /customers/user_abc/appointments/{appointmentId} if customerId matches.
+     * @allow (get, update, delete) - User with UID 'user_abc' can read, update, or delete an appointment under their profile at /customers/user_abc/appointments/{appointmentId}.
+     * @deny (create) - User with UID 'user_xyz' cannot create an appointment under the /customers/user_abc/appointments collection.
+     * @deny (get, update, delete) - User with UID 'user_xyz' cannot read, update, or delete appointments under the /customers/user_abc/appointments collection.
+     * @principle Restricts access to a user's own data tree.
      */
     match /customers/{customerId}/appointments/{appointmentId} {
+      function isOwner(customerId) {
+        return request.auth != null && request.auth.uid == customerId;
+      }
+      function isExistingOwner(customerId) {
+        return isOwner(customerId) && resource != null;
+      }
+
       allow get: if isOwner(customerId);
       allow list: if isOwner(customerId);
-      allow create: if isSignedIn() && isOwner(customerId) && request.resource.data.customerId == customerId;
-      allow update: if isExistingOwner(customerId) && request.resource.data.customerId == resource.data.customerId; //Enforce immutability of customerId
+
+      allow create: if isOwner(customerId) && request.resource.data.customerId == customerId;
+      allow update: if isExistingOwner(customerId) && request.resource.data.customerId == resource.data.customerId;
       allow delete: if isExistingOwner(customerId);
     }
 
     /**
-     * @description Rules for services offered by the salon.
+     * @description Grants public read access to services.  Write access is denied.
      * @path /services/{serviceId}
-     * @allow (get, list) Any user can read the service data.
-     * @allow (create, update, delete) Only admins can manage services.
-     * @principle Allows public read access to service information, but restricts write access to admins.
+     * @allow (get, list) - Any user (or no user) can read service data.
+     * @deny (create, update, delete) - No client can create, update, or delete service data.
+     * @principle Allows public reads but restricts writes to prevent unauthorized modifications.
      */
     match /services/{serviceId} {
       allow get, list: if true;
-      allow create: if isAdmin();
-      allow update: if isAdmin() && resource != null;
-      allow delete: if isAdmin() && resource != null;
+      allow create, update, delete: if false;
     }
 
-     /**
-      * @description Rules for granting admin roles.
-      * @path /roles_admin/{uid}
-      */
-    match /roles_admin/{uid} {
-        allow read: if false;
+      /**
+       * @description Grants admin privileges based on the existence of a document in this collection.
+       * @path /roles_admin/{uid}
+       */
+      match /roles_admin/{uid} {
+        function isAdmin() {
+          return exists(/databases/$(database)/documents/roles_admin/$(request.auth.uid));
+        }
+
+        allow get: if isAdmin();
         allow list: if false;
-        allow create: if isAdmin();
+        allow create: if isAdmin() && request.auth.uid == uid;
         allow update: if false;
-        allow delete: if isAdmin() && resource != null;
-    }
+        allow delete: if isAdmin();
+      }
+
   }
 }

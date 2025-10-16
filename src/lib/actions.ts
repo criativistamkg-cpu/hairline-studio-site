@@ -1,41 +1,76 @@
-"use server";
+'use server';
 
-import { revalidatePath } from "next/cache";
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
-import { z } from "zod";
-import type { Appointment } from "./types";
-
-// --- IN-MEMORY DATABASE ---
-// NOTE: This is a non-persistent in-memory store. Data will be lost on server restart.
-// For production, replace this with a real database (e.g., Firebase Firestore, PostgreSQL).
-let appointments: Appointment[] = [];
-const MAX_APPOINTMENTS_PER_DAY = 5;
+import { revalidatePath } from 'next/cache';
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
+import { z } from 'zod';
+import type { Appointment } from './types';
+import { getFirestore, collection, getDocs, addDoc, getDoc, doc, updateDoc, deleteDoc, query, where, Timestamp } from 'firebase/firestore';
+import { initializeFirebase } from '@/firebase/server';
 
 const appointmentSchema = z.object({
-  clientName: z.string().min(2, { message: "O nome deve ter pelo menos 2 caracteres." }),
-  clientEmail: z.string().email({ message: "Por favor, insira um email válido." }),
-  date: z.string(),
-  time: z.string(),
-  service: z.string(),
+  clientName: z.string().min(2, { message: 'O nome deve ter pelo menos 2 caracteres.' }),
+  clientEmail: z.string().email({ message: 'Por favor, insira um email válido.' }),
+  date: z.string().refine((val) => val, { message: 'A data é obrigatória' }),
+  time: z.string().refine((val) => val, { message: 'A hora é obrigatória' }),
+  service: z.string().refine((val) => val, { message: 'O serviço é obrigatório' }),
 });
+
+const MAX_APPOINTMENTS_PER_DAY = 5;
+
+// --- FIRESTORE SETUP ---
+const { firestore } = initializeFirebase();
+const appointmentsCollection = collection(firestore, 'appointments');
+
 
 // --- APPOINTMENT ACTIONS ---
 
 export async function getAppointments() {
-  return appointments.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    try {
+        const snapshot = await getDocs(query(appointmentsCollection));
+        const appointments: Appointment[] = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...(doc.data() as Omit<Appointment, 'id'>)
+        }));
+        return appointments.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    } catch (error) {
+        console.error("Error fetching appointments:", error);
+        return [];
+    }
 }
 
+
 export async function getAppointmentById(id: string) {
-  return appointments.find(appt => appt.id === id);
+    try {
+        const docRef = doc(firestore, 'appointments', id);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+            return { id: docSnap.id, ...docSnap.data() } as Appointment;
+        } else {
+            return undefined;
+        }
+    } catch (error) {
+        console.error("Error fetching appointment by id:", error);
+        return undefined;
+    }
 }
 
 export async function getDailyBookingsCount() {
-  const counts: Record<string, number> = {};
-  appointments.forEach(appt => {
-    counts[appt.date] = (counts[appt.date] || 0) + 1;
-  });
-  return counts;
+    try {
+        const snapshot = await getDocs(appointmentsCollection);
+        const counts: Record<string, number> = {};
+        snapshot.forEach(doc => {
+            const appt = doc.data() as Appointment;
+            // Ensure date is in YYYY-MM-DD format
+            const dateStr = appt.date.split('T')[0];
+            counts[dateStr] = (counts[dateStr] || 0) + 1;
+        });
+        return counts;
+    } catch (error) {
+        console.error("Error getting daily bookings count:", error);
+        return {};
+    }
 }
 
 export async function createAppointment(prevState: any, formData: FormData) {
@@ -48,22 +83,32 @@ export async function createAppointment(prevState: any, formData: FormData) {
     };
   }
 
-  const { date } = validatedFields.data;
-  const todaysBookings = appointments.filter(appt => appt.date === date).length;
+  const { date, clientEmail } = validatedFields.data;
+  
+  const q = query(appointmentsCollection, where("date", "==", date));
+  const todaysBookingsSnapshot = await getDocs(q);
+  const todaysBookings = todaysBookingsSnapshot.size;
+
 
   if (todaysBookings >= MAX_APPOINTMENTS_PER_DAY) {
     return { message: 'Este dia está totalmente reservado.' };
   }
 
-  const newAppointment: Appointment = {
-    id: crypto.randomUUID(),
-    ...validatedFields.data,
-  };
+  try {
+     const docRef = await addDoc(appointmentsCollection, {
+        ...validatedFields.data,
+        createdAt: Timestamp.now()
+    });
 
-  appointments.push(newAppointment);
-  revalidatePath('/book');
-  revalidatePath('/admin/dashboard');
-  redirect(`/my-appointment/${newAppointment.id}`);
+    revalidatePath('/book');
+    revalidatePath('/admin/dashboard');
+    revalidatePath('/client-dashboard');
+    redirect(`/my-appointment/${docRef.id}`);
+
+  } catch (error) {
+      console.error("Error creating appointment:", error);
+      return { message: 'Não foi possível criar a marcação.' };
+  }
 }
 
 export async function updateAppointment(id: string, prevState: any, formData: FormData) {
@@ -76,21 +121,40 @@ export async function updateAppointment(id: string, prevState: any, formData: Fo
     };
   }
   
-  const appointmentIndex = appointments.findIndex(appt => appt.id === id);
-  if (appointmentIndex === -1) {
-    return { message: 'Marcação não encontrada.' };
-  }
+  try {
+    const docRef = doc(firestore, 'appointments', id);
+    const docSnap = await getDoc(docRef);
 
-  appointments[appointmentIndex] = { ...appointments[appointmentIndex], ...validatedFields.data };
-  revalidatePath('/admin/dashboard');
-  revalidatePath(`/my-appointment/${id}`);
-  redirect(`/my-appointment/${id}?success=true`);
+    if (!docSnap.exists()) {
+        return { message: 'Marcação não encontrada.' };
+    }
+
+    await updateDoc(docRef, {
+        ...validatedFields.data
+    });
+    
+    revalidatePath('/admin/dashboard');
+    revalidatePath(`/my-appointment/${id}`);
+    revalidatePath('/client-dashboard');
+    redirect(`/my-appointment/${id}?success=true`);
+
+  } catch(error) {
+     console.error("Error updating appointment:", error);
+     return { message: 'Não foi possível atualizar a marcação.' };
+  }
 }
 
 export async function deleteAppointment(id: string) {
-  appointments = appointments.filter(appt => appt.id !== id);
-  revalidatePath('/admin/dashboard');
-  revalidatePath('/book');
+    try {
+        const docRef = doc(firestore, 'appointments', id);
+        await deleteDoc(docRef);
+        revalidatePath('/admin/dashboard');
+        revalidatePath('/book');
+        revalidatePath('/client-dashboard');
+    } catch(error) {
+        console.error("Error deleting appointment:", error);
+        // In a real app, you'd want to return an error state
+    }
 }
 
 export async function exportAppointments() {

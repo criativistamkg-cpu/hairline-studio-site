@@ -3,6 +3,7 @@ import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { SeasonalWrapper } from '@/components/layout/SeasonalWrapper';
 import { CustomCursor } from '@/components/layout/CustomCursor';
+import { FirebaseClientProvider } from '@/firebase/client-provider';
 
 export const metadata: Metadata = {
   title: 'Hairline Studio Online',
@@ -22,10 +23,12 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,400..900;1,400..900&family=Belleza&display=swap" rel="stylesheet" />
       </head>
       <body className="font-body antialiased">
-        <CustomCursor />
-        <SeasonalWrapper />
-        {children}
-        <Toaster />
+        <FirebaseClientProvider>
+          <CustomCursor />
+          <SeasonalWrapper />
+          {children}
+          <Toaster />
+        </FirebaseClientProvider>
       </body>
     </html>
   );

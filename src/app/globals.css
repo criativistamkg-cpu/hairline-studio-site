@@ -83,6 +83,13 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+  
+  body.hide-cursor {
+    cursor: none;
+  }
+
+  body.hide-cursor a, body.hide-cursor button, body.hide-cursor [role="button"] {
     cursor: none;
   }
   
@@ -94,9 +101,5 @@
     z-index: -1;
     pointer-events: none;
     transition: background-color 0.5s ease;
-  }
-
-  a, button, [role="button"] {
-    cursor: none;
   }
 }
