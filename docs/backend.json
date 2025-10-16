@@ -1,0 +1,188 @@
+{
+  "entities": {
+    "Appointment": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Appointment",
+      "type": "object",
+      "description": "Represents a single appointment booking.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the appointment."
+        },
+        "customerId": {
+          "type": "string",
+          "description": "Reference to the Customer who booked the appointment. (Relationship: Customer 1:N Appointment)"
+        },
+        "serviceId": {
+          "type": "string",
+          "description": "Reference to the Service being booked. (Relationship: Service 1:N Appointment)"
+        },
+        "appointmentDateTime": {
+          "type": "string",
+          "description": "The date and time of the appointment.",
+          "format": "date-time"
+        },
+        "notes": {
+          "type": "string",
+          "description": "Any notes related to the appointment."
+        }
+      },
+      "required": [
+        "id",
+        "customerId",
+        "serviceId",
+        "appointmentDateTime"
+      ]
+    },
+    "Customer": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Customer",
+      "type": "object",
+      "description": "Represents a customer of the salon.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the customer."
+        },
+        "firstName": {
+          "type": "string",
+          "description": "The customer's first name."
+        },
+        "lastName": {
+          "type": "string",
+          "description": "The customer's last name."
+        },
+        "email": {
+          "type": "string",
+          "description": "The customer's email address.",
+          "format": "email"
+        },
+        "phone": {
+          "type": "string",
+          "description": "The customer's phone number."
+        }
+      },
+      "required": [
+        "id",
+        "firstName",
+        "lastName",
+        "email"
+      ]
+    },
+    "Service": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Service",
+      "type": "object",
+      "description": "Represents a service offered by the salon.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the service."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the service."
+        },
+        "description": {
+          "type": "string",
+          "description": "A description of the service."
+        },
+        "price": {
+          "type": "number",
+          "description": "The price of the service."
+        },
+        "durationMinutes": {
+          "type": "number",
+          "description": "The duration of the service in minutes."
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description",
+        "price",
+        "durationMinutes"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/customers/{customerId}",
+        "definition": {
+          "entityName": "Customer",
+          "schema": {
+            "$ref": "#/backend/entities/Customer"
+          },
+          "description": "Stores customer profiles.  Each document represents a customer. Uses path-based ownership.",
+          "params": [
+            {
+              "name": "customerId",
+              "description": "The unique identifier for the customer."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/customers/{customerId}/appointments/{appointmentId}",
+        "definition": {
+          "entityName": "Appointment",
+          "schema": {
+            "$ref": "#/backend/entities/Appointment"
+          },
+          "description": "Stores appointments for each customer. Includes denormalized 'customerId' for authorization independence.",
+          "params": [
+            {
+              "name": "customerId",
+              "description": "The unique identifier for the customer."
+            },
+            {
+              "name": "appointmentId",
+              "description": "The unique identifier for the appointment."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/services/{serviceId}",
+        "definition": {
+          "entityName": "Service",
+          "schema": {
+            "$ref": "#/backend/entities/Service"
+          },
+          "description": "Stores the services offered by the salon.",
+          "params": [
+            {
+              "name": "serviceId",
+              "description": "The unique identifier for the service."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/roles_admin/{uid}",
+        "definition": {
+          "entityName": "admin",
+          "schema": {
+            "$ref": "#/backend/entities/Customer"
+          },
+          "description": "Documents in this collection grant admin privileges. Existence of a document with a specific UID grants admin role to that user.",
+          "params": [
+            {
+              "name": "uid",
+              "description": "The unique identifier for the user who has admin privileges."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore structure is designed to securely manage customer, service, and appointment data for the Hairline Studio Online application. It emphasizes authorization independence, clarity, and scalability, adhering to the specified design principles. User authentication is handled via Firebase Authentication, with roles stored in the database to avoid custom claims (DBAC). The structure enables secure list operations (QAPs). It uses path-based ownership for private data and membership maps where collaboration is needed.\n\n**Authorization Independence:** The `appointments` subcollection within each customer document (`/customers/{customerId}/appointments/{appointmentId}`) avoids hierarchical authorization dependencies by denormalizing the `customerId` into the appointment document itself. This allows direct access and manipulation of appointments by the owning customer without requiring `get()` calls to parent documents.\n\n**QAPs (Rules Are Not Filters):** Each customer has their own collection of appointments, enabling efficient listing of a customer's appointments. The segregation of appointments into customer-specific subcollections facilitates secure and efficient `list` operations as rules can easily scope access to the authenticated user's appointments. The structure also provides a clear separation between customer data and service data, which has distinct security requirements, facilitating secure `list` operations."
+  }
+}
