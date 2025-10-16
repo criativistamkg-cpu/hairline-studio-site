@@ -19,7 +19,7 @@ export default function ClientDashboardPage() {
   const appointmentsQuery = useMemoFirebase(() => {
     if (!firestore || !user?.email) return null;
     return query(collection(firestore, 'appointments'), where('clientEmail', '==', user.email));
-  }, [firestore, user?.email]);
+  }, [firestore, user]);
 
   const { data: appointments, isLoading: isLoadingAppointments, error: appointmentsError } = useCollection<Appointment>(appointmentsQuery);
 
