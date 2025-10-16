@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { cn } from '@/lib/utils';
 
 const CURSOR_NORMAL_SRC = "https://i.ibb.co/BHYtFCV2/7d5630edbe3641611737b87dcc508641.png";
-const CURSOR_POINTER_SRC = "https://i.ibb.co/zHsWPy0G/transferir-1.png";
+const CURSOR_POINTER_SRC = "https://i.ibb.co/8DqCpksM/40663.png";
 
 
 export function CustomCursor() {
