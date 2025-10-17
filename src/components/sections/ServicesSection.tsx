@@ -16,7 +16,7 @@ export function ServicesSection() {
             </CardHeader>
             <CardContent className="text-muted-foreground">
               <p>
-                Disponibilizamos um serviço completo para senhoras, o nosso conceito assenta na modernidade e na irreverência das trends actuais não esquecendo o Clássico. Os Cabeleireiros/as aplicam as técnicas mais inovadoras em colorimetria, Styling e corte...
+                Disponibilizamos um serviço completo para senhoras. O nosso conceito assenta na modernidade e na irreverência das tendências atuais, sem esquecer o clássico. Os nossos cabeleireiros aplicam as técnicas mais inovadoras em colorimetria, styling e corte...
               </p>
             </CardContent>
           </Card>
@@ -26,7 +26,7 @@ export function ServicesSection() {
             </CardHeader>
             <CardContent className="text-muted-foreground">
               <p>
-                Valorizando o conceito de tradicional BarberShop, colocamos á vossa disposição um serviço completo para Homem. Contamos para isso com o nosso Barbeiro, um criativo em absoluta ascensão com formação certificada pela Dgert, as técnicas utilizadas são as mais inovadoras e seguras.
+                Valorizando o conceito de barbearia tradicional, colocamos à vossa disposição um serviço completo para homem. Para isso, contamos com o nosso barbeiro, um profissional criativo em ascensão com formação certificada pela DGERT. As técnicas utilizadas são as mais inovadoras e seguras.
               </p>
             </CardContent>
           </Card>

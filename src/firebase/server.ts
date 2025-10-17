@@ -1,40 +1,28 @@
-import { initializeApp, getApps, getApp, type FirebaseApp } from 'firebase-admin/app';
-import { getAuth, type Auth } from 'firebase-admin/auth';
+import admin from 'firebase-admin';
 import { getFirestore, type Firestore } from 'firebase-admin/firestore';
-import { firebaseConfig } from './config';
 
-interface FirebaseAdminServices {
-    app: FirebaseApp;
-    auth: Auth;
-    firestore: Firestore;
-}
-
-function initializeFirebaseAdmin(): FirebaseAdminServices {
-    if (getApps().length > 0) {
-        const app = getApp();
-        return {
-            app,
-            auth: getAuth(app),
-            firestore: getFirestore(app),
-        };
-    }
-
-    const app = initializeApp({
-        // When deployed to App Hosting, GOOGLE_CLOUD_PROJECT is automatically set
-        projectId: process.env.GOOGLE_CLOUD_PROJECT || firebaseConfig.projectId,
+// Check if the app is already initialized
+if (!admin.apps.length) {
+  try {
+    admin.initializeApp({
+      credential: admin.credential.cert({
+        projectId: process.env.FIREBASE_PROJECT_ID,
+        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+        privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+      }),
     });
-
-    return {
-        app,
-        auth: getAuth(app),
-        firestore: getFirestore(app),
-    };
+    console.log("Firebase Admin SDK initialized successfully.");
+  } catch (error) {
+    console.error("Firebase Admin SDK initialization error:", error);
+    // Log the environment variables to check if they are being read correctly
+    console.log("FIREBASE_PROJECT_ID:", process.env.FIREBASE_PROJECT_ID);
+    console.log("FIREBASE_CLIENT_EMAIL:", process.env.FIREBASE_CLIENT_EMAIL);
+    console.log("FIREBASE_PRIVATE_KEY exists:", !!process.env.FIREBASE_PRIVATE_KEY);
+  }
 }
 
-const { app, auth, firestore } = initializeFirebaseAdmin();
+const adminFirestore: Firestore = getFirestore();
+const adminApp = admin.app();
+const adminAuth = admin.auth();
 
-export { app as adminApp, auth as adminAuth, firestore as adminFirestore };
-
-// This separate export is for server actions that need to initialize
-// without clashing with the global singleton pattern.
-export const initializeFirebase = initializeFirebaseAdmin;
+export { adminApp, adminAuth, adminFirestore };
